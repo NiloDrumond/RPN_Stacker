@@ -1,23 +1,23 @@
 import java.util.*;
 import java.io.*;
 
-public class RPN_eval {
+public class Postfixa {
 
 	public static void main(String[] args) throws UnexpectedCharacterException {
 		try {
 			Stack<Integer> stack = new Stack<>();
 			LinkedList<Token> tokens = new LinkedList<>();
 
-			File text = new File("Calc1.stk");
-			Scanner scanner = new Scanner(text);
+			File input = new File("Calc1.stk");
+			Scanner scanner = new Scanner(input);
 
 			while (scanner.hasNext()) {
-				String inp = scanner.next();
+				String str = scanner.next();
 
-				if (inp.matches("-?\\d+")) {
-					tokens.add(new Token(TokenType.NUM, inp));
+				if (str.matches("-?\\d+")) {
+					tokens.add(new Token(TokenType.NUM, str));
 				} else {
-					tokens.add(new Token(detectOp(inp.charAt(0)), inp));
+					tokens.add(new Token(detectToken(str.charAt(0)), str));
 				}
 			}
 
@@ -26,17 +26,17 @@ public class RPN_eval {
 				if (temp.type == TokenType.NUM) {
 					stack.push(Integer.parseInt(temp.lexeme));
 				} else {
-					Integer y = stack.pop();
-					Integer x = stack.pop();
-					stack.push(op(x, y, temp.type));
+					Integer a = stack.pop();
+					Integer b = stack.pop();
+					stack.push(op(b, a, temp.type));
 				}
 			});
 
-			System.out.println("\nRPN evaluation result: " + stack.peek());
+			System.out.println("\nRPN result: " + stack.peek());
 			scanner.close();
 
 		} catch (FileNotFoundException e) {
-			System.out.println("File not readble.");
+			System.out.println("No file to read from.");
 		}
 
 	}
@@ -56,7 +56,7 @@ public class RPN_eval {
 		}
 	}
 
-	public static TokenType detectOp(char symbol) throws UnexpectedCharacterException {
+	public static TokenType detectToken(char symbol) throws UnexpectedCharacterException {
 		switch (symbol) {
 			case '-':
 				return TokenType.MINUS;
